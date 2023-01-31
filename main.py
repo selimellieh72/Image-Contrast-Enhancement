@@ -142,7 +142,8 @@ def main():
     base64_image = sys.argv[2]
     extension = sys.argv[1]
     img = imageio.imread(BytesIO(base64.b64decode(base64_image)))
-    result = Ying_2017_CAIP(img)
+    #result = Ying_2017_CAIP(img)
+    result = Image.fromarray(img.astype(np.uint8))
     result.save("test."+extension)
 
 if __name__ == '__main__':
