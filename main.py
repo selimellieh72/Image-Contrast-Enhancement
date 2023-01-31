@@ -4,6 +4,8 @@ import imageio
 import scipy, scipy.misc, scipy.signal
 import cv2
 import sys
+import base64
+from io import BytesIO
 from PIL import Image
 
 def computeTextureWeights(fin, sigma, sharpness):
@@ -137,11 +139,11 @@ def Ying_2017_CAIP(img, mu=0.5, a=-0.3293, b=1.1258):
     return Image.fromarray(result.astype(np.uint8))
 
 def main():
-    img_name = sys.argv[1]
-    img = imageio.imread(img_name)
+    base64_image = sys.argv[2]
+    extension = sys.argv[1]
+    img = imageio.imread(BytesIO(base64.b64decode(base64_image)))
     result = Ying_2017_CAIP(img)
-    name, extension = img_name.split(".")
-    result.save(name+"_new_."+extension)
+    result.save("test."+extension,format=extension)
 
 if __name__ == '__main__':
     main()
