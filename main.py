@@ -7,6 +7,7 @@ import sys
 import base64
 from io import BytesIO
 from PIL import Image
+from fastapi import FastAPI, Body
 
 def computeTextureWeights(fin, sigma, sharpness):
     dt0_v = np.vstack((np.diff(fin, n=1, axis=0), fin[0,:]-fin[-1,:]))
@@ -138,13 +139,22 @@ def Ying_2017_CAIP(img, mu=0.5, a=-0.3293, b=1.1258):
     result[result<0] = 0
     return Image.fromarray(result.astype(np.uint8))
 
-def main():
-    base64_image = sys.argv[2]
-    extension = sys.argv[1]
-    img = imageio.imread(BytesIO(base64.b64decode(base64_image)))
+app = FastAPI()
+
+@app.post('/enhance-color')
+def enhanceColorRoute(image: str = Body(), extension: str = Body()):
+    
+    img = imageio.imread(BytesIO(base64.b64decode(image)))
    # result = Ying_2017_CAIP(img)
     result = Image.fromarray(img.astype(np.uint8))
-    result.save("test."+extension)
-
-if __name__ == '__main__':
+    buffered = BytesIO()
+    result.save(buffered, format=extension)
+    return {"result": base64.b64encode(buffered.getvalue())}
+def main():
+    img_name = sys.argv[1]
+    name, extension = img_name.split(".")
+    img = imageio.imread(img_name)
+    result = Ying_2017_CAIP(img)
+    result.save(name+"__new__."+extension)
+if __name__ == "__main__":
     main()
