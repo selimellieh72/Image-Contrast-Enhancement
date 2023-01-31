@@ -140,7 +140,8 @@ def main():
     img_name = sys.argv[1]
     img = imageio.imread(img_name)
     result = Ying_2017_CAIP(img)
-    result.save("test.jpeg", format="JPEG")
+    name, extension = img_name.split(".")
+    result.save(name+"_new_."+extension)
 
 if __name__ == '__main__':
     main()
