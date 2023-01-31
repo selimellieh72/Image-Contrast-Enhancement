@@ -4,6 +4,7 @@ import imageio
 import scipy, scipy.misc, scipy.signal
 import cv2
 import sys
+from PIL import Image
 
 def computeTextureWeights(fin, sigma, sharpness):
     dt0_v = np.vstack((np.diff(fin, n=1, axis=0), fin[0,:]-fin[-1,:]))
@@ -133,14 +134,13 @@ def Ying_2017_CAIP(img, mu=0.5, a=-0.3293, b=1.1258):
     result = result * 255
     result[result > 255] = 255
     result[result<0] = 0
-    return result.astype(np.uint8)
+    return Image.fromarray(result.astype(np.uint8))
 
 def main():
     img_name = sys.argv[1]
     img = imageio.imread(img_name)
     result = Ying_2017_CAIP(img)
-    plt.imshow(result)
-    plt.show()
+    result.save("test.jpeg", format="JPEG")
 
 if __name__ == '__main__':
     main()
